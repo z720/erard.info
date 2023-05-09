@@ -1,0 +1,26 @@
+version: '3'
+x-logging:
+  &default-logging
+  options:
+    max-size: '12m'
+    max-file: '5'
+  driver: json-file
+
+name: erard-info
+
+services:
+  site:
+    image: ghcr.io/z720/erard.info
+    restart: always
+    logging: *default-logging
+    labels:
+      - traefik.http.routers.erard.rule=Host(`erard.info`,`www.erard.info`)
+      - traefik.http.routers.erard.entrypoints=websecure
+      - traefik.http.routers.erard.tls=true
+      - traefik.http.routers.erard.tls.certresolver=letsencrypt
+      - traefik.http.routers.erard.middlewares=marker,redirectwww  
+networks:
+  default:
+    external: true
+    name: public
+  
